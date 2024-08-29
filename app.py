@@ -2,22 +2,16 @@ from flask import Flask, render_template, request, jsonify, url_for
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from flask_caching import Cache
-import time
-import re
 
 app = Flask(__name__)
-cache = Cache(app, config={'CACHE_TYPE': 'simple'})
 
-# Initialize cache and data loading
-@cache.cached(timeout=3600, key_prefix='all_financial_data')
-def load_data():
-    return pd.read_csv('financial_data.csv')
+# Load the financial data
+df = pd.read_csv('financial_data.csv')
 
-# Initialize Seaborn style
+# Set the style for the plots
 sns.set(style="darkgrid")
 
-# Plot and save the graphs with dynamic file naming
+# Plot and save the graphs
 def plot_total_revenue(df):
     plt.figure(figsize=(10, 6))
     sns.lineplot(data=df, x='Fiscal Year', y='Total Revenue', hue='Company', marker="o")
@@ -27,10 +21,8 @@ def plot_total_revenue(df):
     plt.xticks(df['Fiscal Year'].unique())
     plt.legend(title='Company')
     plt.tight_layout()
-    filename = 'static/revenue_plot.png'
-    plt.savefig(filename)
+    plt.savefig('static/revenue_plot.png')  # Save the plot as an image
     plt.close()
-    return filename
 
 def plot_net_income_comparison(df):
     plt.figure(figsize=(10, 6))
@@ -40,10 +32,8 @@ def plot_net_income_comparison(df):
     plt.xlabel('Company')
     plt.legend(title='Fiscal Year')
     plt.tight_layout()
-    filename = 'static/net_income_plot.png'
-    plt.savefig(filename)
+    plt.savefig('static/net_income_plot.png')  # Save the plot as an image
     plt.close()
-    return filename
 
 def plot_assets_vs_liabilities(df):
     plt.figure(figsize=(10, 6))
@@ -53,23 +43,15 @@ def plot_assets_vs_liabilities(df):
     plt.xlabel('Total Assets (in millions)')
     plt.legend(title='Company')
     plt.tight_layout()
-    filename = 'static/assets_liabilities_plot.png'
-    plt.savefig(filename)
+    plt.savefig('static/assets_liabilities_plot.png')  # Save the plot as an image
     plt.close()
-    return filename
 
-# Generate and store graph filenames
-df = load_data()
-revenue_plot_filename = plot_total_revenue(df)
-net_income_plot_filename = plot_net_income_comparison(df)
-assets_liabilities_plot_filename = plot_assets_vs_liabilities(df)
+# Generate the plots when the app starts
+plot_total_revenue(df)
+plot_net_income_comparison(df)
+plot_assets_vs_liabilities(df)
 
-# Response functions with improved security and error handling
-def validate_input(input_string):
-    return re.sub(r'[^\w\s]', '', input_string)  # Simple regex to remove non-alphanumeric characters except spaces
-
-def get_response(query_type, company, df, year=None, year1=None, year2=None):
-   def get_response(query_type, company, year=None, year1=None, year2=None):
+def get_response(query_type, company, year=None, year1=None, year2=None):
     if query_type == "total_revenue":
         revenue = df[(df['Company'] == company) & (df['Fiscal Year'] == year)]['Total Revenue'].values[0]
         return f"The total revenue for {company} in {year} was ${revenue} million."
@@ -95,10 +77,8 @@ def get_response(query_type, company, df, year=None, year1=None, year2=None):
     else:
         return "Sorry, I can only provide information on predefined queries. Type 'help' to see available options."
 
-
-def simple_chatbot(user_query, df):
-    user_query = user_query.lower()
-    user_query = validate_input(user_query)  # Input validation
+def simple_chatbot(user_query):
+    # Convert the query to lower case for easier matching
     user_query = user_query.lower()
 
     # Help command
@@ -179,18 +159,16 @@ def simple_chatbot(user_query, df):
     else:
         return "Sorry, I can only provide information on predefined queries. Type 'help' to see available options."
 
+
 @app.route('/')
 def home():
     return render_template('index.html')
 
 @app.route('/chatbot', methods=['POST'])
 def chatbot():
-    try:
-        user_query = request.json.get('user_query')
-        response = simple_chatbot(user_query, df)
-        return jsonify({"response": response})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    user_query = request.json.get('user_query')
+    response = simple_chatbot(user_query)
+    return jsonify({"response": response})
 
 if __name__ == '__main__':
     app.run(debug=True)
