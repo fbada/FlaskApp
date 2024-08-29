@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Financial Chatbot</h1>
+        
+    
+        <!-- Instructions Section -->
+        <div id="instructions">
+            <h2>How to Use the Chatbot</h2>
+            <p>This chatbot can provide financial information based on predefined queries. Here are some examples of what you can ask:</p>
+            <div class="row">
+                <div class="column">
+                    <ul>
+                        <li><strong>What is the total revenue for [Company] in [Year]?</strong></li>
+                        <ul>
+                            <li>e.g., "What is the total revenue for Apple in 2022?"</li>
+                        </ul>
+                        <li><strong>How has net income changed for [Company] from [Year1] to [Year2]?</strong></li>
+                        <ul>
+                            <li>e.g., "How has net income changed for Microsoft from 2021 to 2022?"</li>
+                        </ul>
+                        <li><strong>What are the total assets of [Company] in [Year]?</strong></li>
+                        <ul>
+                            <li>e.g., "What are the total assets of Tesla in 2022?"</li>
+                        </ul>
+                        <li><strong>What are the total liabilities of [Company] in [Year]?</strong></li>
+                        <ul>
+                            <li>e.g., "What are the total liabilities of Microsoft in 2022?"</li>
+                        </ul>
+                        <li><strong>What is the cash flow from operations for [Company] in [Year]?</strong></li>
+                        <ul>
+                            <li>e.g., "What is the cash flow from operations for Apple in 2022?"</li>
+                        </ul>
+                    </ul>
+                    <p>Type your question in the input box below and press "Send" or hit "Enter" to get a response.</p>
+                </div>
+                <div class="column">
+                    <h3>Graphs:</h3>
+                    <ul>
+                        <li>Show me the total revenue graph</li>
+                        <li>Show me the net income graph</li>
+                        <li>Show me the assets vs liabilities graph</li>
+                    </ul>
+                </div>
+            </div>
+        
+        <!-- Chatbox Section -->
+        <div id="chat-box">
+            <div id="chat-output"></div>
+            <div id="input-area">
+                <input type="text" id="chat-input" placeholder="Ask a question...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function sendMessage() {
+            const userMessage = document.getElementById('chat-input').value;
+            const outputDiv = document.getElementById('chat-output');
+            outputDiv.innerHTML += `<p><strong>You:</strong> ${userMessage}</p>`;
+
+            fetch('/chatbot', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_query: userMessage }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                outputDiv.innerHTML += `<p><strong>Bot:</strong> ${data.response}</p>`;
+                outputDiv.scrollTop = outputDiv.scrollHeight;  // Auto-scroll to the latest message
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+
+            document.getElementById('chat-input').value = '';
+        }
+
+        // Allow pressing "Enter" to send message
+        document.getElementById('chat-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
