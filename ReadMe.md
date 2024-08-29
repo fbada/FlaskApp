@@ -74,17 +74,7 @@ deactivate
 
 This will return you to your system’s default Python environment.
 
-### Summary
-- **Clone the Repository**: `git clone https://github.com/yourusername/financial-chatbot.git`
-- **Navigate to Directory**: `cd financial-chatbot`
-- **Create a Virtual Environment**: `python -m venv venv`
-- **Activate the Virtual Environment**: `source venv/bin/activate` (macOS/Linux) or `venv\Scripts\activate` (Windows)
-- **Install Dependencies**: `pip install -r requirements.txt`
-- **Run the Application**: `python app.py`
-
-By following these steps, you’ll have the Financial Chatbot up and running in your local environment.
-
-#### How the Chatbot Works
+## How the Chatbot Works
 - **User Interaction**: Users interact with the chatbot through a text input field on the web interface.
 - **Query Processing**: The chatbot processes user queries to determine which financial data is being requested. It then retrieves the corresponding information from a CSV file containing financial data.
 - **Response Generation**: The chatbot responds with either a text-based answer (e.g., specific financial figures) or a link to a static graph that visually represents the data.
