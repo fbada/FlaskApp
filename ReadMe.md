@@ -9,7 +9,7 @@ The Financial Chatbot is a web-based tool designed to provide quick and easy acc
 To start, you'll need to clone the repository containing the Financial Chatbot application. Open your terminal or command prompt and run the following command:
 
 ```bash
-git clone https://github.com/yourusername/financial-chatbot.git
+git clone https://github.com/fbada/FlaskApp.git
 ```
 
 Replace `yourusername` with the actual GitHub username or organization name where the repository is hosted.
