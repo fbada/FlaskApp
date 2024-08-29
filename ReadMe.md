@@ -12,13 +12,12 @@ To start, you'll need to clone the repository containing the Financial Chatbot a
 git clone https://github.com/fbada/FlaskApp.git
 ```
 
-Replace `yourusername` with the actual GitHub username or organization name where the repository is hosted.
 
 #### 2. **Navigate to the Project Directory**
 Once the repository is cloned, navigate to the project directory:
 
 ```bash
-cd financial-chatbot
+cd Flask-App
 ```
 
 #### 3. **Set Up a Virtual Environment**
